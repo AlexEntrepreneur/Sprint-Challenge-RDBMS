@@ -9,46 +9,55 @@ server.use(express.json());
 
 //====== PROJECTS ENDPOINTS ======//
 server.get(projectsAPIURL, (req, res) => {
-  res.send('PROJECTS API');
+  db.getProjects()
+    .then(projectsArray => {
+      res.json(projectsArray);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: `Something went wrong: ${err}`
+      })
+    });
 });
 
 server.get(`${projectsAPIURL}/:id`, (req, res) => {
-  // res.send('SINGLE PROJECT');
   const { id } = req.params;
   db.getProjectById(id)
     .then(project => {
-      res.json(project)
+      res.json(project);
     })
     .catch((err) => {
-      res.status(404).json({
+      res.status(500).json({
         message: `Something went wrong: ${err}`
       })
-    })
+    });
 });
 
 server.post(projectsAPIURL, (req, res) => {
-  db.postProject()
-    .then((affectedFieldsInt) => {
-      res.send(affectedFieldsInt)
+  const { name, description } = req.body;
+  db.postProject({ name, description })
+    .then((newProjectId) => {
+      res.json(newProjectId);
     })
     .catch(err => {
       res.status(500).json({
         message: `Something went wrong: ${err}`
       })
-    })
+    });
 });
 
 //====== ACTIONS ENDPOINTS ======//
 server.post(actionsAPIURL, (req, res) => {
-  db.postAction()
-    .then((affectedFieldsInt) => {
-      res.send(affectedFieldsInt)
+  const { project_id, description, notes } = req.body;
+  db.postAction({ project_id, description, notes })
+    .then((newActionId) => {
+      res.json(newActionId);
     })
     .catch(err => {
       res.status(500).json({
         message: `Something went wrong: ${err}`
       })
-    })
+    });
 });
 
 
