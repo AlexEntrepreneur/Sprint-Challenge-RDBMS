@@ -1,4 +1,5 @@
 const express = require('express');
+const db = require('./database/dataAccessHelpers');
 const server = express();
 const PORT = 5555;
 const projectsAPIURL = '/api/projects';
@@ -12,16 +13,42 @@ server.get(projectsAPIURL, (req, res) => {
 });
 
 server.get(`${projectsAPIURL}/:id`, (req, res) => {
-  res.send('SINGLE PROJECT');
+  // res.send('SINGLE PROJECT');
+  const { id } = req.params;
+  db.getProjectById(id)
+    .then(project => {
+      res.json(project)
+    })
+    .catch((err) => {
+      res.status(404).json({
+        message: `Something went wrong: ${err}`
+      })
+    })
 });
 
 server.post(projectsAPIURL, (req, res) => {
-  res.send('POSTED PROJECT');
+  db.postProject()
+    .then((affectedFieldsInt) => {
+      res.send(affectedFieldsInt)
+    })
+    .catch(err => {
+      res.status(500).json({
+        message: `Something went wrong: ${err}`
+      })
+    })
 });
 
 //====== ACTIONS ENDPOINTS ======//
 server.post(actionsAPIURL, (req, res) => {
-  res.send('POSTED ACTION');
+  db.postAction()
+    .then((affectedFieldsInt) => {
+      res.send(affectedFieldsInt)
+    })
+    .catch(err => {
+      res.status(500).json({
+        message: `Something went wrong: ${err}`
+      })
+    })
 });
 
 
