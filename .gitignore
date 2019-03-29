@@ -80,3 +80,5 @@ typings/
 .dynamodb/
 
 yarn.lock
+
+database/lambda.sqlite3
